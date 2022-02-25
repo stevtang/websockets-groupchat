@@ -6,6 +6,7 @@
 const Room = require("./Room");
 
 /** ChatUser is a individual connection from client -> server to chat. */
+const { getJoke } = require("./joke");
 
 class ChatUser {
   /** Make chat user: store connection-device, room.
@@ -77,13 +78,18 @@ class ChatUser {
     let msg = JSON.parse(jsonData);
     
     if (msg.type === "join") this.handleJoin(msg.name);
-    else if(msg.text === '/joke') this.handleJoke(msg.text);
+    else if(msg.text === '/joke') this.handleJoke();
     else if (msg.type === "chat") this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
 
-  handleJoke(text) {
-    
+  async handleJoke() {
+    const joke = await getJoke();
+    this.send(JSON.stringify({
+      name: "server",
+      type: "joke",
+      text: joke,
+    }));
   }
 
   /** Connection was closed: leave room, announce exit to others. */
