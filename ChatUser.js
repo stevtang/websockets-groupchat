@@ -55,6 +55,7 @@ class ChatUser {
    * */
 
   handleChat(text) {
+    
     this.room.broadcast({
       name: this.name,
       type: "chat",
@@ -74,10 +75,15 @@ class ChatUser {
 
   handleMessage(jsonData) {
     let msg = JSON.parse(jsonData);
-
+    
     if (msg.type === "join") this.handleJoin(msg.name);
+    else if(msg.text === '/joke') this.handleJoke(msg.text);
     else if (msg.type === "chat") this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
+  }
+
+  handleJoke(text) {
+    
   }
 
   /** Connection was closed: leave room, announce exit to others. */
